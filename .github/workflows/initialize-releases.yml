@@ -25,12 +25,12 @@ jobs:
                 throw error
               }
               if (status !== 0) {
-                throw new Error(`${cmd} ${args.join(' ')} exited with status ${status} (stderr: ${stderr})`)
+                throw new Error(`${cmd} ${args.join(' ')} exited with status ${status} (stderr: ${stderr}, stdout: ${stdout}, error: ${error}, status: ${status})`)
               }
               return stdout
             }
 
-            let startAt = '2021-02-16T19:55:36.000Z'
+            let startAt = '2022-07-13T10:40:15.000Z'
             const baseURL = 'https://wingit.blob.core.windows.net/'
             for (const release of list) {
               console.log(JSON.stringify(release, null, 2))
