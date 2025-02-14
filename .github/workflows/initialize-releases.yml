@@ -30,17 +30,16 @@ jobs:
               return stdout
             }
 
-            let startAfter = '2018-02-05T23:28:59.000Z'
+            let startAt = '2021-02-16T19:55:36.000Z'
             const baseURL = 'https://wingit.blob.core.windows.net/'
             for (const release of list) {
               console.log(JSON.stringify(release, null, 2))
 
-              if (startAfter) {
-                if ((new Date(release.date)).toISOString() === startAfter) {
-                  startAfter = null
-                  continue
+              if (startAt) {
+                if ((new Date(release.date)).toISOString() === startAt) {
+                  startAt = null
                 } else {
-                  console.log(`skipping ${release.date}`)
+                  console.log(`skipping ${(new Date(release.date)).toISOString()}`)
                   continue
                 }
               }
