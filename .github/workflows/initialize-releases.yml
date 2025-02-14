@@ -35,7 +35,7 @@ jobs:
               return stdout
             }
 
-            let startAt = '2022-07-13T10:40:15.000Z'
+            let startAt = '2023-07-26T09:52:21.000Z'
             const baseURL = 'https://wingit.blob.core.windows.net/'
             for (const release of list) {
               console.log(JSON.stringify(release, null, 2))
