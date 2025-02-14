@@ -1,0 +1,68 @@
+name: Initialize releases
+
+on: [push]
+
+jobs:
+  initialize:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: mirror Git for Windows' Pacman repository to GitHub releases
+        uses: actions/github-script@v7
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          script: |
+            const makeList = require('./make-list.js')
+            const list = makeList()
+
+            const ChildProcess = require('child_process')
+            const run = (cmd, args) => {
+              const { error, status, stderr, stdout } = ChildProcess.spawnSync(cmd, args, { stdio: 'inherit' })
+              if (error) {
+                throw error
+              }
+              if (status !== 0) {
+                throw new Error(`${cmd} ${args.join(' ')} exited with status ${status} (stderr: ${stderr})`)
+              }
+              return stdout
+            }
+
+            let startAfter = 'Mon Feb 05 2018 23:28:59 GMT+0000 (Coordinated Universal Time)'
+            const baseURL = 'https://wingit.blob.core.windows.net/'
+            for (const release of list) {
+              if (startAfter) {
+                if (`${release.date}` === startAfter) {
+                  startAfter = null
+                } else {
+                  console.log(`skipping ${release.date}`)
+                  continue
+                }
+              }
+
+              console.log(JSON.stringify(release, null, 2))
+              const targets = []
+              for (name of release.names) {
+                const target = name.replace(/.*\//, '')
+                console.log(`downloading ${baseURL}${name} to ${target}`)
+                // call on curl to download the file
+                run('curl', ['-sfLo', target, `${baseURL}${name}`])
+                targets.push(target)
+              }
+
+              console.log(`creating release ${release.date}`)
+              // call GitHub CLI to upload the files to a new release
+              run('gh', [
+                'release',
+                'create',
+                '-R',
+                '${{ github.repository }}',
+                '--title',
+                (new Date(release.date)).toString(),
+                (new Date(release.date)).toISOString().replace(/:/g, '-'),
+                ...targets])
+              break
+            }
+
