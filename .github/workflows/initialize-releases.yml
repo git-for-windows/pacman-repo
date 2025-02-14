@@ -9,10 +9,15 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/create-github-app-token@v1
+        id: token
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
       - name: mirror Git for Windows' Pacman repository to GitHub releases
         uses: actions/github-script@v7
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.token.outputs.token }}
         with:
           script: |
             const makeList = require('./make-list.js')
