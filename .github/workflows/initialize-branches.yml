@@ -9,11 +9,11 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: initialize {x86_64,aarch64,i686} branches
+      - name: initialize {aarch64,i686} branches
         run: |
           set -ex
 
-          for arch in x86_64 aarch64 i686
+          for arch in aarch64 i686
           do
             git switch --orphan $arch
 
@@ -21,20 +21,20 @@ jobs:
             case "$arch" in
               x86_64)
                 base_url=https://wingit.blob.core.windows.net/x86-64
-                msystem=mingw64
+                mingw_suffix=mingw64
                 ;;
               aarch64)
-                msystem=clangarm64
+                mingw_suffix=aarch64
                 ;;
               i686)
-                msystem=mingw32
+                mingw_suffix=mingw32
                 ;;
             esac
 
             date="$(curl --head $base_url/git-for-windows.db |sed -n 's/^Last-Modified: //ip')"
             test -n "$date" || exit 1
 
-            for suffix in '' "-$msystem"
+            for suffix in '' "-$mingw_suffix"
             do
               for infix in db files
               do
