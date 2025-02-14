@@ -25,7 +25,7 @@ jobs:
 
             const ChildProcess = require('child_process')
             const run = (cmd, args) => {
-              const { error, status, stderr, stdout } = ChildProcess.spawnSync(cmd, args, { stdio: 'inherit' })
+              const { error, status, stderr, stdout } = ChildProcess.spawnSync(cmd, args, { stdio: 'pipe' })
               if (error) {
                 throw error
               }
