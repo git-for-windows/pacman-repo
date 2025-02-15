@@ -52,7 +52,9 @@ jobs:
 
               const targets = []
               for (name of release.names) {
-                const target = name.replace(/.*\//, '')
+                const target = name
+                  .replace(/^(i686|x86_64|aarch64)\/(git-for-windows)\./, '$2-$1.') // avoid filename conflicts
+                  .replace(/.*\//, '')
                 console.log(`downloading ${baseURL}${name} to ${target}`)
                 // call on curl to download the file
                 run('curl', ['-sfLo', target, `${baseURL}${name}`])
