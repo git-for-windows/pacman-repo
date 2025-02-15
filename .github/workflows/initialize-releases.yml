@@ -38,13 +38,14 @@ jobs:
             let startAt = '2025-02-14T08:31:04.000Z'
             const baseURL = 'https://wingit.blob.core.windows.net/'
             for (const release of list) {
-              console.log(JSON.stringify(release, null, 2))
+              const date = (new Date(release.date)).toISOString()
+              console.log(`::group::${date}\n${JSON.stringify(release, null, 2)}\n::endgroup::`)
 
               if (startAt) {
-                if ((new Date(release.date)).toISOString() === startAt) {
+                if (date === startAt) {
                   startAt = null
                 } else {
-                  console.log(`skipping ${(new Date(release.date)).toISOString()}`)
+                  console.log(`skipping ${date}`)
                   continue
                 }
               }
